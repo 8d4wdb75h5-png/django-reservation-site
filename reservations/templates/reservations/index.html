@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <style>
+    .btn {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+    } 
+
+    .btn-green {
+      background: #22c55e;   /* 緑 */
+      color: white;
+    }
+
+    .btn-green:hover {
+      opacity: 0.85;
+    }
+
+    .btn-gray {
+      background: #e5e7eb;   /* グレー */
+      color: #666;
+    }
+    body { background: #f5f7fb; }
+
+    .card{
+      background:#fff;
+      border-radius:14px;
+      padding:16px;
+      margin-bottom:12px;
+      box-shadow:0 8px 20px rgba(0,0,0,.08);
+    }
+
+    .slot-time{
+      font-size:16px;
+      font-weight:600;
+    }
+
+    .slot-capacity{
+      font-size:14px;
+      color:#666;
+      margin-top:4px;
+    }
+
+    .sub { color: #666; }
+    .feature { margin: 10px 0 20px; }
+    .feature li { margin: 4px 0; }
+
+</style>
+
+
+</head>
+<body>
+  <div class="container">
+    <h1>テンプレート表示できた！</h1>
+    <p class="sub">
+      管理画面で作った予約枠を一覧表示し、空きがあれば予約できます（満席は予約不可）。
+      予約はPOST+DBロックで二重予約を防止しています。
+    </p>
+
+    <ul class="feature">
+      <li>予約枠一覧（DB連携）</li>
+      <li>満席制御（残り０は予約不可）</li>
+      <li>予約処理（POST）</li>
+      <li>二重予約（transaction + select_for_update）e）</li>
+    </ul>
+
+    <ul>
+      {% for slot in slots %}
+          <li class="card">
+            <div>
+              <div class="slot-time">
+                {{ slot.date }} {{slot.time }}
+              </div>
+              <div class="slot-capacity">
+                残り:{{ slot.capacity }}
+              </div>
+            </div>
+
+            <div style="margin-top: 10px;">
+              {% if slot.capacity > 0 %}
+                <form action="{% url 'reservations:reserve' slot.id %}" method="post" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-green">予約する</button>
+                </form>
+              {% else %}
+                <button class="btn btn-gray" disabled>満席</button>
+              {% endif %}
+            </div>
+          </li>
+      {% empty %}
+        <li>まだ枠がありません</li>
+      {% endfor %}
+    </ul>
+  </div>
+</body>
+</html>
