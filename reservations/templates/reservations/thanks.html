@@ -1,11 +1,25 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>予約完了</title>
+  <link rel="stylesheet" href="{% static 'reservations/style.css' %}">
 </head>
 <body>
-  <h1>予約できました！</h1>
-  <p><a href="/">トップに戻る</a></p>
+  <div class="container">
+    <header class="header">
+      <h1 class="title">予約サイト</h1>
+      <p class="subtitle">予約が完了しました</p>
+    </header>
+
+    <div class="card">
+      <h2 class="success">✅ 予約できました！</h2>
+      <p class="sub">ありがとうございます。トップに戻って別の枠も確認できます。</p>
+
+      <a class="btn btn-green" href="/">トップに戻る</a>
+    </div>
+  </div>
 </body>
 </html>

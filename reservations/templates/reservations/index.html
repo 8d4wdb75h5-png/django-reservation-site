@@ -1,56 +1,8 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <style>
-    .btn {
-      display: inline-block;
-      padding: 8px 14px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 600;
-    } 
-
-    .btn-green {
-      background: #22c55e;   /* 緑 */
-      color: white;
-    }
-
-    .btn-green:hover {
-      opacity: 0.85;
-    }
-
-    .btn-gray {
-      background: #e5e7eb;   /* グレー */
-      color: #666;
-    }
-    body { background: #f5f7fb; }
-
-    .card{
-      background:#fff;
-      border-radius:14px;
-      padding:16px;
-      margin-bottom:12px;
-      box-shadow:0 8px 20px rgba(0,0,0,.08);
-    }
-
-    .slot-time{
-      font-size:16px;
-      font-weight:600;
-    }
-
-    .slot-capacity{
-      font-size:14px;
-      color:#666;
-      margin-top:4px;
-    }
-
-    .sub { color: #666; }
-    .feature { margin: 10px 0 20px; }
-    .feature li { margin: 4px 0; }
-
-</style>
-
-
+  <link rel="stylesheet" href="{% static 'reservations/style.css' %}">
 </head>
 <body>
   <div class="container">
@@ -73,7 +25,7 @@
               <div class="slot-time">
                 {{ slot.date }} {{slot.time }}
               </div>
-              <div class="slot-capacity">
+              <div class="badge">
                 残り:{{ slot.capacity }}
               </div>
             </div>
