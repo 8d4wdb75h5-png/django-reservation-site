@@ -1,11 +1,14 @@
 from django.db import models
 from django.utils import timezone
+from django.apps import apps
+from django.db.models import Sum
 
 
 class Slot(models.Model):
     date = models.DateField()
     time = models.TimeField()
-    capacity = models.PositiveIntegerField(default=1)
+    capacity = models.PositiveIntegerField(default=1) # 定員(固定)
+
 
     class Meta:
         unique_together = ("date", "time")
@@ -16,11 +19,20 @@ class Slot(models.Model):
 
     @property
     def reserved_count(self):
-        return self.reservations.filter(status=Reservation.Status.ACTIVE).count()
+        Reservation = apps.get_model("reservations","Reservation")
+        total = self.reservations.filter(
+            status=Reservation.Status.ACTIVE
+        ).aggregate(s=Sum("people"))["s"]
+        return total or 0
+    
+    @property
+    def remaining(self):
+        # 残り枠
+        return max(0,self.capacity - self.reserved_count)
 
     @property
     def is_full(self):
-        return self.reserved_count >= self.capacity
+        return self.remaining <= 0
 
 
 class Reservation(models.Model):
@@ -29,8 +41,9 @@ class Reservation(models.Model):
         CANCELED = "canceled", "キャンセル"
 
     slot = models.ForeignKey(Slot, related_name="reservations", on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    phone = models.CharField(max_length=20)
+    name = models.CharField(max_length=50, blank=True)
+    phone = models.CharField(max_length=20, blank=True)
+    people = models.PositiveIntegerField(default=1)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.ACTIVE)
     created_at = models.DateTimeField(default=timezone.now)
 

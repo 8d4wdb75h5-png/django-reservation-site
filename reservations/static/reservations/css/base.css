@@ -1,0 +1,36 @@
+/* base.css：全体の土台（優しい雰囲気） */
+
+:root{
+  --green-50:#f4fbf4;
+  --green-100:#e9f7ea;
+  --green-200:#d9f0db;
+  --green-300:#bfe6c3;
+  --green-500:#6fbf73;
+
+  --text:#1f2d1f;
+  --muted:#5e6b5e;
+
+  --radius:14px;
+  --shadow:0 6px 18px rgba(0,0,0,.06);
+}
+
+body{
+  background: var(--green-50);
+  color: var(--text);
+}
+
+a{ color: inherit; }
+
+.page-wrap{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 22px 14px 40px;
+}
+
+/* 角丸カードの共通 */
+.soft-card{
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
