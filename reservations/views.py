@@ -8,6 +8,9 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.db import models
+from django.db.models import Sum, F
+from django.db.models.functions import Coalesce
 
 @login_required
 def manage_home(request):
@@ -20,7 +23,23 @@ def index(request):
 
     today = timezone.localdate()
 
-    slots = Slot.objects.filter(date__gte=today).order_by("date", "time")
+    slots = (
+        Slot.objects.filter(date__gte=today)
+        .annotate(
+            reserved=Coalesce(
+                Sum(
+                    "reservations__people",
+                    filter=models.Q(reservations__status=Reservation.Status.ACTIVE),
+                ),
+                0,
+            )
+        )
+        .order_by("date", "time")
+    )
+
+    now = timezone.localtime().time()
+    slots = slots.exclude(date=today, time__lt=now)
+    
     if qdate:
         if qdate < today:
             qdate = None # 過去日なら無効化(一覧出さない)
