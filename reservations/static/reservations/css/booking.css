@@ -173,3 +173,14 @@
   background-color: #f0f7ff;
   border-radius: 80%;
 }
+
+/* 祝日 = 赤 */
+.flatpickr-day.is-holiday {
+  color: #e74c3c !important;
+}
+
+.flatpickr-day.is-holiday {
+  color: #e74c3c !important;
+  background-color: #fff5f5 !important;
+  border-radius: 80%;
+}
