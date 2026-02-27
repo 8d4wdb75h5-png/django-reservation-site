@@ -9,8 +9,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db import models
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Value
 from django.db.models.functions import Coalesce
+from collections import defaultdict
+import json
+from django.db.models import Case, When, IntegerField
 
 @login_required
 def manage_home(request):
@@ -32,7 +35,8 @@ def index(request):
                     filter=models.Q(reservations__status=Reservation.Status.ACTIVE),
                 ),
                 0,
-            )
+            ),
+            remaining_db=F("capacity") - F("reserved")
         )
         .order_by("date", "time")
     )
@@ -55,10 +59,48 @@ def index(request):
     )
     available_dates = [d.strftime("%Y-%m-%d") for d in available_dates]
 
+    all_slots = (
+        Slot.objects.filter(date__gte=today)
+        .annotate(
+            reserved=Coalesce(
+                Sum(
+                    "reservations__people",
+                    filter=models.Q(reservations__status=Reservation.Status.ACTIVE),
+                ),
+                0,
+            )
+        )
+    )
+
+    date_counts = defaultdict(lambda: {"available": 0, "full": 0})
+
+    for s in all_slots:
+        remaining = s.capacity - s.reserved
+        key = s.date.strftime("%Y-%m-%d")
+
+        if remaining > 0:
+            date_counts[key]["available"] += 1
+        else:
+            date_counts[key]["full"] += 1
+
+    # mixed判定
+    final_status = {}
+
+    for d, counts in date_counts.items():
+        if counts["available"] > 0 and counts["full"] > 0:
+            final_status[d] = "mixed"
+        elif counts["available"] > 0:
+            final_status[d] = "available"
+        else:
+            final_status[d] = "full"
+
+    date_status_json = json.dumps(final_status)
+
     return render(request, "reservations/index.html", {
         "slots": slots,
         "qdate": qdate,
         "available_dates": available_dates,
+        "date_status_json": date_status_json,
     })
 
 

@@ -27,7 +27,7 @@ class Slot(models.Model):
     
     @property
     def remaining(self):
-        # 残り枠
+        # 空き枠
         return max(0,self.capacity - self.reserved_count)
 
     @property
