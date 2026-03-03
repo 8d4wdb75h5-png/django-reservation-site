@@ -28,6 +28,14 @@ document.addEventListener("DOMContentLoaded", async function () {
     locale: "ja",
     dateFormat: "Y-m-d",
 
+    onChange: function(selectedDates, dateStr) {
+      if (dateStr) {
+        const form = input.closest("form");
+        form.classList.add("loading");
+        form.submit();
+      }
+    },
+
     onDayCreate: function (dObj, dStr, fp, dayElem) {
       const date = dayElem.dateObj;
 

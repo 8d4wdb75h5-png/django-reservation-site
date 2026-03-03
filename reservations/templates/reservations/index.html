@@ -150,5 +150,26 @@
   <!-- 自作JS -->
   <script defer src="{% static 'reservations/js/datepicker.js' %}"></script>
 
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const dateInput = document.getElementById("date-picker");
+    const form = dateInput.closest("form");
+
+    if (!dateInput || !form) return;
+
+    // flatpickr使ってる場合
+    if (dateInput._flatpickr) {
+      dateInput._flatpickr.config.onChange.push(function(selectedDates, dateStr) {
+        if (dateStr) form.submit();
+      });
+    } else {
+      // 通常input用（保険）
+      dateInput.addEventListener("change", function () {
+        if (dateInput.value) form.submit();
+      });
+    }
+  });
+  </script>
+
 </body>
 </html>
