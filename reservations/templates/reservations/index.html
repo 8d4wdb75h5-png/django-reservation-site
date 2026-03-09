@@ -53,7 +53,7 @@
 
       <!-- 日付フィルター（白枠とは別） -->
       <section class="bg-white border rounded-4 shadow-sm p-3 p-md-4 mb-4">
-        <form method="get" class="row g-2 align-items-end">
+        <form id="filterForm" method="get" class="row g-2 align-items-end">
           <div class="col-12 col-md-7">
             <label for="date-picker" class="form-label small fw-semibold mb-1">日付</label>
             <input
@@ -68,7 +68,7 @@
           </div>
 
           <div class="col-12 col-md-auto">
-            <button type="submit" class="btn btn-primary w-100">表示</button>
+            <button type="button" id="showBtn" class="btn btn-primary w-100">表示</button>
           </div>
 
           <div class="col-12 col-md-auto">
@@ -82,55 +82,9 @@
 
       <!-- 予約枠一覧 -->
       <section class="d-grid gap-3">
-        {% for slot in slots %}
-          <div class="bg-white border rounded-4 shadow-sm p-3 p-md-4 d-flex justify-content-between align-items-center">
-            <div>
-              <!-- 目立たせる -->
-              <div class="slot-datetime">
-                  <span class="slot-date">
-                      {{ slot.date|date:"Y年n月j日(D)" }}
-                  </span>
-                  <span class="slot-time">🕒
-                      {{ slot.time|time:"H:i" }}
-                  </span>
-              </div>
-              <!-- 薄め -->
-              <div class="small text-muted">
-                空き {{ slot.remaining }} 枠
-              </div>
-            </div>
-
-            <div>
-              {% if slot.is_full %}
-                  <button class="btn px-4 rounded-pill full-seat-btn" disabled>
-                    満席
-                  </button>     
-              {% else %}
-               <form method="post" action="{% url 'reservations:reserve' slot.id %}">
-                {% csrf_token %}
-                <div class="mb-2">
-                  <select name="people" class="form-select form-select-sm">
-                    {% for i in "123456789"|make_list %}
-                      {% if forloop.counter <= slot.remaining %}
-                        <option value="{{ forloop.counter }}">
-                          {{ forloop.counter}}人
-                        </option>
-                      {% endif %}
-                    {% endfor %}
-                  </select> 
-                </div>
-                <button type="submit" class="btn reserve-btn px-4 rounded-pill">
-                  予約する
-                </button>
-               </form>
-              {% endif %}
-            </div>
-          </div>
-        {% empty %}
-          <div class="bg-white border rounded-4 shadow-sm p-4 text-center text-muted">
-            この条件の予約枠はありません
-          </div>
-        {% endfor %}
+        <div id="slotBox">
+          {% include "reservations/_slots_list.html" %}
+        </div>
       </section>
 
     </div>
@@ -149,27 +103,6 @@
 
   <!-- 自作JS -->
   <script defer src="{% static 'reservations/js/datepicker.js' %}"></script>
-
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const dateInput = document.getElementById("date-picker");
-    const form = dateInput.closest("form");
-
-    if (!dateInput || !form) return;
-
-    // flatpickr使ってる場合
-    if (dateInput._flatpickr) {
-      dateInput._flatpickr.config.onChange.push(function(selectedDates, dateStr) {
-        if (dateStr) form.submit();
-      });
-    } else {
-      // 通常input用（保険）
-      dateInput.addEventListener("change", function () {
-        if (dateInput.value) form.submit();
-      });
-    }
-  });
-  </script>
 
 </body>
 </html>

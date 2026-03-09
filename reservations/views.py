@@ -167,3 +167,16 @@ def cansel_reservation(request,reservation_id):
     request.session.pop("last_reservation_id",None)
 
     return redirect("reservations:index")
+
+def slots_partial(request):
+    qdate = parse_date(request.GET.get("date") or "")
+
+    qs = Slot.objects.all().order_by("date", "time")
+
+    if qdate:
+        qs = qs.filter(date=qdate)
+
+    return render(request, "reservations/_slots_list.html", {
+        "slots": qs,
+        "qdate": qdate,
+    })

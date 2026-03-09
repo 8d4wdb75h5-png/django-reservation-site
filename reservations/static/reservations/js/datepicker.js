@@ -2,6 +2,23 @@ document.addEventListener("DOMContentLoaded", async function () {
   const input = document.getElementById("date-picker");
   if (!input) return;
 
+  const form = document.getElementById("filterForm");
+  const showBtn = document.getElementById("showBtn");
+
+  if (form) {
+      form.addEventListener("submit", function (e) {
+          e.preventDefault();
+      });
+  }
+
+  if (showBtn) {
+      showBtn.addEventListener("click", function () {
+          if (input.value) {
+              loadSlots(input.value);
+          }
+      });
+  }
+
   // Django json_script から dateStatus を取得
   let dateStatus = {};
   const el = document.getElementById("date-status-date");
@@ -24,15 +41,38 @@ document.addEventListener("DOMContentLoaded", async function () {
     holidayData = {};
   }
 
+  // ===== AJAXで枠一覧だけ更新する関数 =====
+  async function loadSlots(dateStr) {
+    const slotBox = document.getElementById("slotBox");
+    if (!slotBox) return;
+
+    slotBox.classList.add("loading");
+
+    try {
+      const res = await fetch(`/slots/partial/?date=${encodeURIComponent(dateStr)}`, {
+        headers: { "X-Requested-With": "fetch" }
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const html = await res.text();
+      slotBox.innerHTML = html;
+    } catch (e) {
+      console.error("loadSlots failed:", e);
+      // 失敗したら、保険で普通にページ遷移させてもOK（任意）
+      // window.location.href = `/?date=${encodeURIComponent(dateStr)}`;
+    } finally {
+      slotBox.classList.remove("loading");
+    }
+  }
+
   flatpickr(input, {
     locale: "ja",
     dateFormat: "Y-m-d",
 
     onChange: function(selectedDates, dateStr) {
       if (dateStr) {
-        const form = input.closest("form");
-        form.classList.add("loading");
-        form.submit();
+        loadSlots(dateStr);
       }
     },
 
