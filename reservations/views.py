@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponseNotAllowed
 from django.db import transaction
@@ -6,7 +7,6 @@ from .models import Slot,Reservation
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.db import models
 from django.db.models import Sum, F, Value
