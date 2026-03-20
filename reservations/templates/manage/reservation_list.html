@@ -28,14 +28,24 @@
             <td>{{ reservation.slot }}</td>
             <td>{{ reservation.name|default:"未入力" }}</td>
             <td>{{ reservation.people }}</td>
-            <td>
-                <form method="post" action="{% url 'reservations:delete_reservation' reservation.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger"
-                    onclick="return confirm('本当に削除しますか？')">
-                        削除
-                    </button>
-                </form>
+            <td> 
+                <div class="d-flex flex-column gap-2">
+                    <a href="{% url 'reservations:edit_reservation' reservation.id %}"
+                       class="btn btn-warning btn-sm w-100">
+                        編集
+                    </a>
+
+                    <form method="post"
+                          action="{% url 'reservations:delete_reservation' reservation.id %}"
+                          class="m-0">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="btn btn-danger btn-sm w-100"
+                                onclick="return confirm('本当に削除しますか？')">
+                            削除
+                        </button>
+                    </form>
+                </div>
             </td>
         </tr>
         {% endfor %}

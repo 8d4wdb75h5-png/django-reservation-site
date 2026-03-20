@@ -12,5 +12,6 @@ urlpatterns = [
     path("manage/reservations/", views.reservation_list, name='reservation_list'),
     path("slots/partial/", views.slots_partial, name="slots_partial"),
     path("manage/reservations/delete/<int:pk>/", views.delete_reservation, name="delete_reservation"),
+    path("manage/reservations/edit/<int:pk>/", views.edit_reservation, name="edit_reservation"),
 ]
 

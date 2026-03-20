@@ -44,6 +44,24 @@ def delete_reservation(request, pk):
 
     return redirect('reservations:reservation_list')
 
+@login_required
+def edit_reservation(request, pk):
+    if not request.user.is_staff:
+        return redirect('/')
+
+    reservation = get_object_or_404(Reservation, pk=pk)
+
+    if request.method == "POST":
+        reservation.name = request.POST.get("name")
+        reservation.people = request.POST.get("people")
+        reservation.phone = request.POST.get("phone")
+        reservation.save()
+        return redirect('reservations:reservation_list')
+
+    return render(request, 'manage/edit_reservation.html', {
+        'reservation': reservation
+    })
+
 def index(request):
     # ?date=YYYY-MM-DD を受け取る
     qdate_str = request.GET.get("date")
