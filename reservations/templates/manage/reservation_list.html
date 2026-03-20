@@ -17,6 +17,7 @@
             <th>予約枠</th>
             <th>氏名</th>
             <th>人数</th>
+            <th>操作</th>
         </tr>
     </thead>
     <tbody>
@@ -26,6 +27,12 @@
             <td>{{ reservation.slot }}</td>
             <td>{{ reservation.name|default:"未入力" }}</td>
             <td>{{ reservation.people }}</td>
+            <td>
+                <form method="post" action="{% url 'reservations:delete_reservation' reservation.id %}">
+                    {% csrf_token %}
+                    <button type="submit">削除</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
