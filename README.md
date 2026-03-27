@@ -10,6 +10,17 @@
 - 予約処理（POST）
 - 二重予約防止（transaction.atomic + select_for_update）
 
+## 予約の流れ
+1. 日付を選択
+2. 空き予約枠を表示
+3. 予約ボタンで予約実行
+4. 予約完了ページを表示
+
+## 技術ポイント
+- Django 'transaction.atomic'を使った二重予約防止
+- 'select_for_update'による排他制御
+- Bootstrapを使ったUI構築
+
 ## 使用技術
 - Python / Django
 - SQLite（開発用）
